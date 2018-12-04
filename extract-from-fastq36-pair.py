@@ -3,7 +3,6 @@ import sys
 import os
 import signal
 import gzip
-import genutils
 
 from optparse import OptionParser
 
@@ -44,6 +43,16 @@ def determine_parts_all(seq):
         start = end
     return res    
 #########################################################################################
+def get_4l_record(myFile):
+    #fastq style file...
+    # '' if last record
+    myLine1 = myFile.readline()
+    if myLine1 == '':
+        return ''
+    myLine2 = myFile.readline()
+    myLine3 = myFile.readline()
+    myLine4 = myFile.readline()
+    return [myLine1,myLine2,myLine3,myLine4]
 #########################################################################################
 
 
@@ -64,7 +73,7 @@ except:
 
 num = 0
 while True:
-    ref = genutils.get_4l_record(inFile1)
+    ref = get_4l_record(inFile1)
     if ref == '':
         break
     name = ref[0][1:].rstrip()
@@ -83,7 +92,7 @@ inFile1.close()
 
 num = 0
 while True:
-    ref = genutils.get_4l_record(inFile2)
+    ref = get_4l_record(inFile2)
     if ref == '':
         break
     name = ref[0][1:].rstrip()
