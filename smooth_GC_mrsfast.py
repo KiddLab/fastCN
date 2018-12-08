@@ -1,14 +1,10 @@
-#!/usr/bin/env python
+#!/usr/bin/env python2.7
 
 
 import sys
 import numpy
 import math
 from lowess import lowess
-import matplotlib
-matplotlib.use('Agg')
-import matplotlib.pyplot as plt
-import matplotlib.mlab as mlab
 import struct
 
 GC_normalize = sys.argv[1]
@@ -55,6 +51,13 @@ for i in range(401):
 	if corfactor[i]>3: corfactor[i] = 3
 	if corfactor[i]<1/3 : corfactor[i] = 1/3
 
+sys.stdout.write(struct.pack('f'*len(corfactor), *corfactor))
+
+import matplotlib
+matplotlib.use('Agg')
+import matplotlib.pyplot as plt
+import matplotlib.mlab as mlab
+
 fig, ax1 = plt.subplots()
 ax1.plot(x,y,'b-')
 ax1.set_xlabel('GC %')
@@ -71,6 +74,4 @@ ax2.axis([0,100,0.3,3])
 for t2 in ax2.get_yticklabels():
 	t2.set_color('r')
 plt.savefig(GC_normalize.replace('txt','png'),format='png')
-
-sys.stdout.write(struct.pack('f'*len(corfactor), *corfactor))
 
