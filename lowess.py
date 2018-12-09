@@ -16,9 +16,7 @@ function will run faster with a smaller number of iterations."""
     n = len(x)
     r = int(numpy.ceil(f*n))
     h = [numpy.sort(numpy.abs(x-x[i]))[r] for i in range(n)]
-    print h
     w = numpy.clip(numpy.abs(([x]-numpy.transpose([x]))/h),0.0,1.0)
-    print w
     w = 1-w*w*w
     w = w*w*w
     yest = numpy.zeros(n)
