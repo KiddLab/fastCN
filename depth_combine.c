@@ -2,17 +2,19 @@
 //Float/half conversion
 //avx/f16c CPU support
 
-#include <cstdio>
-#include <x86intrin.h>
-#include <malloc.h>
-#include <stdint.h>
-#include <cstring>
+
+#include "malloc.h"
+#include "stdint.h"
+#include "stdio.h"
+#include "string.h"
+#include "x86intrin.h"
+
 
 #define buffer_size 1024*1024
 
 typedef FILE* file_handle;
 
-file_handle * binary_input_handles;
+file_handle binary_input_handles[256];
 FILE * output_file;
 int input_count = 0;
 
@@ -211,7 +213,7 @@ void Combine_depth_half()
 	v8sf * intermediate = (v8sf*) memalign(32, buffer_size * sizeof(v8sf));
 	v8hf * buffer = (v8hf*) memalign(32, buffer_size * sizeof(v8hf));
 	float * intermediate_hf = (float *) intermediate;
-	char cpu_support = f16c_support(); //F16C comes later than AVX
+	//char cpu_support = f16c_support(); //F16C comes later than AVX
 	char read_fail = 1;
 	while (read_fail)
 	{
@@ -221,26 +223,26 @@ void Combine_depth_half()
 		{
 			//Read as half float x8 ( << 3)
 			actual_size = fread(buffer, sizeof(unsigned short), buffer_size << 3, binary_input_handles[f_idx]);
-			if (cpu_support) {
-				for (int k = 0; k < (actual_size + 7) >> 3; k++) {
-					intermediate[k] += _mm256_cvtph_ps(buffer[k]);
-				}
-			}
-			else {
+			//if (cpu_support) {
+			//	for (int k = 0; k < (actual_size + 7) >> 3; k++) {
+			//		intermediate[k] += _mm256_cvtph_ps(buffer[k]);
+			//	}
+			// }
+			//else {
 				unsigned short * buffer_hf = (unsigned short *) buffer;
 				for (int k = 0; k < actual_size; k++){
 					intermediate_hf[k] += HtoF(buffer_hf[k]);
 				}
-			}
+			// }
 		}
 		//Result to half float
-		if (cpu_support) {
-			for (int k = 0; k < (actual_size + 7) >> 3; k++) Sum[k] = _mm256_cvtps_ph(intermediate[k], 0);
-		}
-		else {
+		//if (cpu_support) {
+		//	for (int k = 0; k < (actual_size + 7) >> 3; k++) Sum[k] = _mm256_cvtps_ph(intermediate[k], 0);
+		// }
+		//else {
 			unsigned short * Sum_hf = (unsigned short *) Sum;
 			for (int k = 0; k < actual_size; k++) Sum_hf[k] = FtoH(intermediate_hf[k]);
-		}
+		// }
 		//Dump to output
 		if (actual_size) fwrite(Sum, sizeof(unsigned short), actual_size, output_file);
 		else read_fail = 0;
@@ -316,7 +318,6 @@ int main(int argc, char** argv)
 	//File list
 	if (input_argv)
 	{
-		binary_input_handles = new file_handle [256];
 		FILE * input_file;
 		input_file = fopen(argv[input_argv],"rb");
 		char buffer_str[65535];
@@ -329,7 +330,6 @@ int main(int argc, char** argv)
 	else {
 		//No listing
 		char handle_idx = 0;
-		binary_input_handles = new file_handle [input_count];
 		for (int k = argc - 1; k >= argc - input_count; k--)
 		{
 			binary_input_handles[handle_idx] = fopen(argv[k],"rb");
