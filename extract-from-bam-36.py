@@ -7,12 +7,17 @@ from optparse import OptionParser
 
 
 USAGE = """
- extract-from-bam.py --in <BAM file>  --rg <read group ID extract, leave blank if all >
+ extract-from-bam.py --in <BAM file>  
+                     --rg <read group ID extract, leave blank if all >
+                     --reference <reference fasta file, needed for CRAM support>
+
+            
 
 """
 parser = OptionParser(USAGE)
 parser.add_option('--in',dest='inBAM', help = 'input BAM file')
 parser.add_option('--rg',dest='rgID', help = 'read group ID to exctract')
+parser.add_option('--reference',dest='referenceFile', help = 'reference file needed for CRAM support')
 
 #parser.add_option('--out',dest='outBase', help = 'output base prefix')
 
@@ -45,9 +50,13 @@ def determine_parts_all(seq):
 
 if options.rgID is None:
     cmd = 'samtools view -F 3840 '
+    if options.referenceFile is not None:
+        cmd += ' -T %s ' % options.referenceFile
     cmd += options.inBAM
 else:
     cmd = 'samtools view -F 3840 '
+    if options.referenceFile is not None:
+        cmd += ' -T %s ' % options.referenceFile
     cmd += '-r '+ options.rgID + ' ' 
     cmd += options.inBAM
 
