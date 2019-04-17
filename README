@@ -20,3 +20,10 @@ It will generate Sample_prefix.bin, Sample_prefix.png and Sample_prefix.txt.
 The first file is the corrected depth in half float (IEEE 754-2008) representation. Masked region is -1.0
 
 
+To compile, run:
+g++ -o GC_control_gen GC_control_gen.cc 
+g++ -o SAM_GC_correction SAM_GC_correction.cc 
+g++ depth_combine.c -O2 -flax-vector-conversions -o depth_combine
+
+
+
