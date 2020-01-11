@@ -195,7 +195,8 @@ windows/SRR062559.depth.3kb.bed.stats has the mean and std depth for autosomes a
 The two png files show the distributions.
 
 ![zscore](sample-output/windows/SRR062559.depth.3kb.bed.stats.zscore.hist.png)
-![dept-hist](sample-output/windows/sample-output/windows/SRR062559.depth.3kb.bed.stats.hist.png)
+
+![dept-hist](sample-output/windows/SRR062559.depth.3kb.bed.stats.hist.png)
 
 
 
