@@ -136,6 +136,15 @@ mrsfast --search GRCh38_BSM_WMDUST/ref-WMDUST-masked/GRCh38_BSM_WMDUST_masked.fa
 
 This will make the file `mapping/SRR062559.sam.gz`
 
+Here is the final output of mrsFAST for the command we ran:
+
+```
+Total Time:                      3251.35
+Total No. of Reads:            101010744
+Total No. of Mappings:          36734287
+```
+
+
 ## Step 7 Perform GC correction and make per-bp depth file.
 
 The GC correction step uses a python utility `smooth_GC_mrsfast.py` for curve fitting. 
