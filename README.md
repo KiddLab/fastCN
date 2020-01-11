@@ -9,7 +9,7 @@ consider QuicK-mer2, accessible at: https://github.com/KiddLab/QuicK-mer2
 The basic functionality of fastCN is described in [fastCN-README.txt](fastCN-README.txt)
 
 
-For more information, and to reference the algorithm, please cite ![our paper](https://bmcbiol.biomedcentral.com/articles/10.1186/s12915-018-0535-2) :
+For more information, and to reference the algorithm, please cite [our paper](https://bmcbiol.biomedcentral.com/articles/10.1186/s12915-018-0535-2) :
 
 
 Pendleton AL, Shen F, Taravella AM, Emery S, Veeramah KR, Boyko AR, Kidd JM.
