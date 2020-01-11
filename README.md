@@ -104,7 +104,7 @@ mrsfast --index GRCh38_BSM_WMDUST_masked.fa
 ```
 
 
-# Step 5 Download a small fastq set from 1000 Genomes for testing
+## Step 5 Download a small fastq set from 1000 Genomes for testing
 
 ```
 cd ..
@@ -166,6 +166,36 @@ there is a mean depth of ~1.25 and a smooth correction curve.
 Here is a sample image
 
 ![SRR062559.png](sample-output/binary/SRR062559.png)
+
+## Step 8: Convert per bp corrected depth to depth in windows
+The file binary/SRR062559.bin.gz is a half-float representation of the per-bp  GC corrected depth.
+We can convert to mean values in 3kb windows using the associated python script.
+
+```
+mkdir windows
+
+python fastCN/perbp-to-windows.py \
+--depth binary/SRR062559.bin.gz \
+--out windows/SRR062559.depth.3kb.bed \
+--chromlen GRCh38_BSM_WMDUST/ref-WMDUST/GRCh38_BSM_WMDUST_unmasked.fa.fai \
+--windows GRCh38_BSM_WMDUST/windows-WMDUST/GRCh38_BSM_WMDUST.3kb.bed
+```
+
+## Step 9 convert windows of depth to windows of copy-number based on defined control regions
+
+```
+python fastCN/depth-to-cn.py \
+--in windows/SRR062559.depth.3kb.bed \
+--autocontrol GRCh38_BSM_WMDUST/windows-WMDUST/GRCh38_BSM_WMDUST.3kb.autoControl.bed \
+--chrX GRCh38_BSM_WMDUST/windows-WMDUST/GRCh38_BSM_WMDUST.3kb.chrXnonParControl.bed
+```
+
+The file windows/SRR062559.depth.3kb.bed.CN.bed has per window estimated copy numbers
+windows/SRR062559.depth.3kb.bed.stats has the mean and std depth for autosomes and X.
+The two png files show the distributions.
+
+![zscore](sample-output/windows/SRR062559.depth.3kb.bed.stats.zscore.hist.png)
+![dept-hist](sample-output/windows/sample-output/windows/SRR062559.depth.3kb.bed.stats.hist.png)
 
 
 
