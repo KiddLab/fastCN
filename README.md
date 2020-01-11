@@ -198,6 +198,46 @@ The two png files show the distributions.
 
 ![dept-hist](sample-output/windows/SRR062559.depth.3kb.bed.stats.hist.png)
 
+# Other information and FAQs
+
+Sample output is given in the 'sample-out' directory of this repository.
+Other potentially useful scripts are included in the 'other-scripts' directory.
+
+### How to make other sizes of windows
+Check out `make-equal-windows.py`  This program allows you to make windows of any size. Each window
+will contain the same number of unmasked bp.
+
+### How to make a bedgraph track for display on the UCSC genome browser
+The refernce we aligned to includes some sequences that are not part of the UCSC genome browser release.  These should be removed.
+Then, the bedGraphToBigWig program can be used to make a file for display.
+
+```
+grep -v '_decoy' SRR062559.depth.3kb.bed.CN.bed | grep -v 'chrEBV'  > SRR062559.3kb.CN.sel.bed
+
+bedGraphToBigWig   SRR062559.3kb.CN.sel.bed \
+hg38/hg38.chrom.sizes \
+SRR062559.3kb.CN.sel.bw
+```
+The chrom.sizes file matches the actual chromosomes in the UCSC browser.  The .bw track
+can be loaded to a custom trackhub or as a custom track
+
+### How to make a heat map bred track
+
+Start with the normalized copy number file corresponding to the chromosomes in the UCSC browser 
+
+Then make heat map track with:
+```
+python fastCN/other-scripts/make-colortrack-fordisplay.py  --cn windows/SRR062559.3kb.CN.sel.bed --name SRR062559
+bedToBigBed -type=bed9 NA12878.3kb.CN.sel.bed-color hg38/hg38.chrom.sizes NA12878.3kb.col.bb
+ ```
+This makes a file NA12878.3kb.CN.sel.bed.bedColor that can be converted to bigbed and loaded.
+Note that if you are zoomed out too far you will just see black instead of the appropriate colors.
+
+The color key is
+![color key](other-scripts/heat-map-key-small.png)
+
+
+
 
 
 
