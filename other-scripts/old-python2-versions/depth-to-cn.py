@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python2
 
 
 import matplotlib
@@ -7,7 +7,6 @@ import matplotlib.pyplot as plt
 
 import numpy as np
 from optparse import OptionParser
-import sys
 
 ###############################################################################
 def windowToKey(a):
@@ -50,9 +49,7 @@ def calc_stats(windowFile,autoControlWindows,XnonParControlWindows):
     res['aMed'] = np.median(aDepths)
     res['aDepths'] = aDepths
     cutoff = 3.0*res['aMed']  
-    
     res['aDepthsRestricted'] = [i for i in aDepths if i <= cutoff]
-        
     res['xMed'] = np.median(xDepths)
     res['xDepths'] = xDepths
     cutoff = 3.0*res['xMed'] 
@@ -72,7 +69,7 @@ def calc_stats(windowFile,autoControlWindows,XnonParControlWindows):
 ###############################################################################
 
 USAGE = """
-python depth-to-cn.py  --in <fastCN window bed> --autocontrol <autosomes control windows>  --chrX <chrX windows for plotting> 
+python2 depth-to-cn.py  --in <fastCN window bed> --autocontrol <autosomes control windows>  --chrX <chrX windows for plotting> 
 
 converts  fastCN 3kb window counts to normalized depth
 makes plots and stats table
@@ -128,27 +125,26 @@ for line in inFile:
         XnonParControlWindows[k] = 1    
 inFile.close()
 
-print('Have %i auto control and %i X NONPAR windows' % (len(autoControlWindows), len(XnonParControlWindows)))
+print 'Have %i auto control and %i X NONPAR windows' % (len(autoControlWindows), len(XnonParControlWindows))
 
 
 my_dpi = 100
 fn = options.inFile
-print('doing',fn)
+print 'doing',fn
 
 
 sn = fn.split('/')[-1].split('.')[0]
-print(sn)
+print sn
 
 statsFile = fn + '.stats'
 
 res = calc_stats(fn,autoControlWindows,XnonParControlWindows)
 
-
 # make histogram plot
 histPlotFile = statsFile + '.hist.png'
-plt.figure(figsize=(int(400/my_dpi), int(300/my_dpi)), dpi=my_dpi)
-(n,b,p) = plt.hist(res['aDepthsRestricted'],bins=50,label='Autos',density=True)
-plt.hist(res['xDepthsRestricted'],bins=b,label='X-nonPAR',density=True)
+plt.figure(figsize=(400/my_dpi, 300/my_dpi), dpi=my_dpi)
+(n,b,p) = plt.hist(res['aDepthsRestricted'],bins=50,label='Autos',normed=True)
+plt.hist(res['xDepthsRestricted'],bins=b,label='X-nonPAR',normed=True)
 plt.legend()    
 plt.title(sn)
 plt.xlabel('Control Window Depth')
@@ -189,10 +185,10 @@ outAuto.close()
 
 zhistPlotFile = statsFile + '.zscore.hist.png'
 #    plt.figure(figsize=(6,4))
-plt.figure(figsize=(int(400/my_dpi), int(300/my_dpi)), dpi=my_dpi)
+plt.figure(figsize=(400/my_dpi, 300/my_dpi), dpi=my_dpi)
 
-plt.hist(res['autoZ'],bins=np.arange(-6,10,.2),label='Autos',density=True)
-plt.hist(res['xZ'],bins=np.arange(-6,10,.2),label='X-nonPAR',density=True)
+plt.hist(res['autoZ'],bins=np.arange(-6,10,.2),label='Autos',normed=True)
+plt.hist(res['xZ'],bins=np.arange(-6,10,.2),label='X-nonPAR',normed=True)
 plt.legend()    
 plt.title(sn)
 plt.xlabel('Z Score')
@@ -206,7 +202,7 @@ nl = '%s\t%s\n' % (sn,res['resStr'])
 outF.write(nl)
 outF.close()
 
-print('Converting to copy number')
+print 'Converting to copy number'
 
 inFile = open(statsFile,'r')
 l = inFile.readline()
@@ -214,7 +210,7 @@ inFile.close()
 l = l.rstrip()
 l = l.split()
 m = float(l[1])
-print(m)
+print m
 cnFile = fn + '.CN.bed'
 inFile = open(fn,'r')
 outFile = open(cnFile,'w')

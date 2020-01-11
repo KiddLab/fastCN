@@ -1,4 +1,4 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python
 
 import sys
 import os
@@ -46,9 +46,9 @@ def determine_parts_all(seq):
 
 
 try:
-    inFile = gzip.open(options.inFASTQ)
+    inFile = gzip.open(options.inFASTQ,'rt')
 except:
-    print "ERROR!! Could not open the file " + options.inFASTQ + " using gzip.open \n"
+    print("ERROR!! Could not open the file " + options.inFASTQ + " using gzip.open \n")
     sys.exit(1)
 
 

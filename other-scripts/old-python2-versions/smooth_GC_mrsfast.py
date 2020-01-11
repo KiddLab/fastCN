@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python2.7
 
 
 import sys
@@ -6,7 +6,6 @@ import numpy
 import math
 from lowess import lowess
 import struct
-import os
 
 GC_normalize = sys.argv[1]
 normalize = open(GC_normalize,'r')
@@ -52,13 +51,7 @@ for i in range(401):
 	if corfactor[i]>3: corfactor[i] = 3
 	if corfactor[i]<1/3 : corfactor[i] = 1/3
 
-
-with os.fdopen(sys.stdout.fileno(), "wb", closefd=False) as stdout:
-    stdout.write(struct.pack('f'*len(corfactor), *corfactor))
-    stdout.flush()
-
-# Old python2 cmd to write to stdout:
-#sys.stdout.write(struct.pack('f'*len(corfactor), *corfactor))
+sys.stdout.write(struct.pack('f'*len(corfactor), *corfactor))
 
 import matplotlib
 matplotlib.use('Agg')

@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python2
 import sys
 import os
 import signal
@@ -32,9 +32,9 @@ def determine_parts_all(seq):
     seqLen = len(seq)
     if seqLen < targetLen:
         return []        
-    numParts = int(seqLen/targetLen)
+    numParts = seqLen/targetLen
     delta = seqLen - (numParts * targetLen)
-    delta = int(delta/numParts)
+    delta = delta/numParts
     start = delta
     res = []
     for i in range(numParts):
@@ -57,15 +57,15 @@ def get_4l_record(myFile):
 
 
 try:
-    inFile1 = gzip.open(options.inFQ1, 'rt')
+    inFile1 = gzip.open(options.inFQ1, 'r')
 except:
-    print("ERROR!! Could not open the file " + options.inFQ1 + " \n")
+    print "ERROR!! Could not open the file " + options.inFQ1 + " \n"
     sys.exit(1)
 
 try:
-    inFile2 = gzip.open(options.inFQ2, 'rt')
+    inFile2 = gzip.open(options.inFQ2, 'r')
 except:
-    print("ERROR!! Could not open the file " + options.inFQ2 + " \n")
+    print "ERROR!! Could not open the file " + options.inFQ2 + " \n"
     sys.exit(1)
 
 

@@ -1,31 +1,27 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python2
+
 import sys
 import os
 import signal
+import gzip
 
 from optparse import OptionParser
 
 
 USAGE = """
- extract-from-bam.py --in <BAM file>  
-                     --rg <read group ID extract, leave blank if all >
-                     --reference <reference fasta file, needed for CRAM support>
-
-            
+ extract-from-fastq36.py --in <fastq.gz file>
 
 """
 parser = OptionParser(USAGE)
-parser.add_option('--in',dest='inBAM', help = 'input BAM file')
-parser.add_option('--rg',dest='rgID', help = 'read group ID to exctract')
-parser.add_option('--reference',dest='referenceFile', help = 'reference file needed for CRAM support')
+parser.add_option('--in',dest='inFASTQ', help = 'input fastq.gz file')
 
 #parser.add_option('--out',dest='outBase', help = 'output base prefix')
 
 
 (options, args) = parser.parse_args()
 
-if options.inBAM is None:
-    parser.error('input BAM not given')
+if options.inFASTQ is None:
+    parser.error('input inFASTQ not given')
 
 ###############################################################################
 
@@ -37,7 +33,7 @@ def determine_parts_all(seq):
         return []        
     numParts = seqLen/targetLen
     delta = seqLen - (numParts * targetLen)
-    delta = delta/numParts
+    delta = delta >> 1
     start = delta
     res = []
     for i in range(numParts):
@@ -48,34 +44,28 @@ def determine_parts_all(seq):
 #########################################################################################
 
 
-if options.rgID is None:
-    cmd = 'samtools view -F 3840 '
-    if options.referenceFile is not None:
-        cmd += ' -T %s ' % options.referenceFile
-    cmd += options.inBAM
-else:
-    cmd = 'samtools view -F 3840 '
-    if options.referenceFile is not None:
-        cmd += ' -T %s ' % options.referenceFile
-    cmd += '-r '+ options.rgID + ' ' 
-    cmd += options.inBAM
 
 try:
-    inFile = os.popen(cmd, 'r')
+    inFile = gzip.open(options.inFASTQ)
 except:
-    print("ERROR!! Could not open the file " + options.inBAM + " using samtools view \n")
+    print "ERROR!! Could not open the file " + options.inFASTQ + " using gzip.open \n"
     sys.exit(1)
 
 
 #signal.signal(signal.SIGPIPE, signal.SIG_DFL)  # To deal with fact that might close file before reading all
 
 #num = 0
-for line in inFile:
-    line = line.rstrip()
-    line = line.split()
-    name = line[0]
-    seq = line[9]
-    qual = line[10]    
+while True:
+    line1 = inFile.readline().rstrip()
+    if line1 == '':
+        break
+    line2 = inFile.readline().rstrip()
+    line3 = inFile.readline().rstrip()
+    line4 = inFile.readline().rstrip()
+    name = line1[1:]
+    name = name.split()[0]
+    seq = line2
+    qual = line4
     parts = determine_parts_all(seq)
     for i in range(len(parts)):
         s = seq[parts[i][0]:parts[i][1]]

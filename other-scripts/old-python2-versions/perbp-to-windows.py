@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python2
 
 import struct
 import array
@@ -8,8 +8,6 @@ import signal
 import os
 import numpy as np
 from optparse import  OptionParser
-import gzip
-
 
 ###############################################################################
 # Helper function to run commands, handle return values and print to log file
@@ -18,19 +16,17 @@ def runCMD(cmd):
     if val == 0:
         pass
     else:
-        print('command failed')
-        print(cmd)
+        print 'command failed'
+        print cmd
         sys.exit(1)
 #####################################################################
 def open_gzip_read(fileName):
-#    gc = 'gunzip -c ' + fileName
-#    signal.signal(signal.SIGPIPE, signal.SIG_DFL)  # To deal with fact that might close file before reading all
+    gc = 'gunzip -c ' + fileName
+    signal.signal(signal.SIGPIPE, signal.SIG_DFL)  # To deal with fact that might close file before reading all
     try:
-#        inFile = os.popen(gc, 'r')
-        inFile = subprocess.Popen(["zcat", fileName], stdout=subprocess.PIPE)        
-        
+        inFile = os.popen(gc, 'r')
     except:
-        print("ERROR!! Couldn't open the file " + fileName + " using zcat -c\n")
+        print "ERROR!! Couldn't open the file " + fileName + " using gunzip -c\n"
         sys.stdout.flush()
         sys.exit(1)
     return inFile
@@ -69,11 +65,11 @@ if options.windows is None:
 
 
 
-#options.depth
-#options.out
-print('Doing:')
-print(options.depth)
-print(options.out)
+options.depth
+options.out
+print 'Doing:'
+print options.depth
+print options.out
 
 
 windowsFile = options.windows
@@ -82,11 +78,11 @@ chromLenandOrder = options.chromLen
 
 ######
 #setup chrom lens
-print('Begining read in of depth from gzipped file....')
+print 'Begining read in of depth from gzipped file....'
 sys.stdout.flush()
 runCMD('date')
-print(options.depth)
-print(chromLenandOrder)
+print options.depth
+print chromLenandOrder
     
     
 chromStarts = {}
@@ -101,35 +97,22 @@ for line in inFile:
     chromStarts[cName] = startBp
     startBp += cLen
 inFile.close()
-print('totBp is',startBp)
+print 'totBp is',startBp
 
 
-print('Read in depth array...',options.depth)
+print 'Read in depth array...',options.depth
+sys.stdout.flush()
+    
+inpipe = open_gzip_read(options.depth)
+depthArray = np.fromfile(inpipe  , dtype = np.float16, count=startBp )
+inpipe.close()
+print 'Size:',depthArray.size
+    
+print 'DONE read in of depth file'
 sys.stdout.flush()
     
 
-# how to read from gzip file in python 3
-#infile = gzip.open(options.depth,'rb')
-#depthArray = np.frombuffer(infile.read(),dtype=np.float16, count=startBp)
-#depthArray = np.fromfile(infile,dtype=np.float16, count=startBp)
-#infile.close()
-
-with gzip.open(options.depth, "rb") as infile:
-     data = np.frombuffer(infile.read(), dtype=np.float16, count=startBp)
-
-depthArray = np.copy(data)
-print('Made copy from buffer!')
-
-
-
-
-print('Size:',depthArray.size)
-    
-print ('DONE read in of depth file')
-sys.stdout.flush()
-    
-
-print('Convert inf to 65504.0 ...')
+print 'Convert inf to 65504.0 ...'
 sys.stdout.flush()
 
 # change value of Inf to 65504, the max value of float16
@@ -139,7 +122,7 @@ depthArray[depthArray == np.inf] = 65504.0
 
 
     
-print('Starting window output...')
+print 'Starting window output...'
 sys.stdout.flush()
 
 inFile = open(windowsFile,'r')
@@ -174,7 +157,7 @@ for line in inFile:
 inFile.close()
 outFile.close()
 runCMD('date')
-print('DONE with window output')
+print 'DONE with window output'
 sys.stdout.flush()    
 
 

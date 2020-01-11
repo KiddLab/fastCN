@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python2
 import sys
 import os
 import signal
@@ -63,7 +63,7 @@ else:
 try:
     inFile = os.popen(cmd, 'r')
 except:
-    print("ERROR!! Could not open the file " + options.inBAM + " using samtools view \n")
+    print "ERROR!! Could not open the file " + options.inBAM + " using samtools view \n"
     sys.exit(1)
 
 
