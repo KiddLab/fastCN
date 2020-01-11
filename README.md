@@ -233,13 +233,35 @@ bedToBigBed -type=bed9 NA12878.3kb.CN.sel.bed-color hg38/hg38.chrom.sizes NA1287
 This makes a file NA12878.3kb.CN.sel.bed.bedColor that can be converted to bigbed and loaded.
 Note that if you are zoomed out too far you will just see black instead of the appropriate colors.
 
-The color key is
+The color key is:
+
 ![color key](other-scripts/heat-map-key-small.png)
 
+### How did you make the exclusion file?
 
+This file contains regions that likely to be copy number variable.  They are ignored
+when performing the GC normalization and when converting from depth to copy number.
 
+Here is the exclusion file we used contains DGV variants from these studies indicated below
+accessed from http://dgv.tcag.ca/dgv/docs/GRCh38_hg38_variants_2016-05-15.txt
 
+regions were taken from studies:
+ 20492 1000_Genomes_Consortium_Phase_1
+  42585 1000_Genomes_Consortium_Phase_3
+   8418 Conrad_et_al_2009
+   1307 McCarroll_et_al_2008
+  11600 Sudmant_et_al_2013
 
+Only the CNV regions were taken, not mobile element insertions, inversions, or other variants.
+
+We also included the regions of segmental duplication in the assembly from the SegDup track on UCSC.
+
+The windows used for copy number conversion were found using bed tools intersectBed command.
+
+### Which Python version?
+Originally, the fastCN approach used help scripts and conversion utilities written in python2.  
+We have since converted the scripts to python3.  The older python2 scripts can be found in the
+other-scripts/old-python2-versions/ directory.
 
 
 
