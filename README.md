@@ -19,7 +19,7 @@ crest in dog domestication. BMC Biol. 2018 Jun 28;16(1):64. doi: 10.1186/s12915-
 # Tutorial for setting up and testing the fastCN pipeline.
 
 Requirements:
-python3, various standard python modules, g++, mrsfast version 3.4 (or newer), samtools
+python3, various standard python modules, g++, mrsfast, samtools
 
 ## Step 1 Download and compile fastCN core programs
 
@@ -71,4 +71,71 @@ Mapping will occur against this version, otherwise a large number of alignments 
 `GRCh38_BSM_WMDUST/windows-WMDUST/` contains several files needed for normalization and processing.
 Included are windows containing 1kb and 3kb of masked sequence, as well as regions that are not used in
 copy-number correction.
+
+## Step 3 Setup fastCN GC-normalization files
+
+The basic command layout is:
+```./GC_control_gen Original_genome.fa Excluded.bed Masked.bed 400 genome_GC.bin```
+
+The 400 indicates a window size of 400 bp for determining GC percentage for normalization.
+The command will create a file GRCh38_BSM_WMDUST/ref/GRCh38_BSM_WMDUST.GC_control.bin
+
+
+Sample cmd:
+```
+fastCN/GC_control_gen \
+GRCh38_BSM_WMDUST/ref-WMDUST/GRCh38_BSM_WMDUST_unmasked.fa \
+GRCh38_BSM_WMDUST/ref-WMDUST/GRCh38_BSM_WMDUST.exclude.bed.sort2 \
+GRCh38_BSM_WMDUST/ref-WMDUST/GRCh38_BSM_WMDUST.gaps.bed.slop36.sorted.merged.sort2 \
+400 \
+GRCh38_BSM_WMDUST/ref-WMDUST/GRCh38_BSM_WMDUST.GC_control.bin
+```
+
+Note that the file GRCh38_BSM_WMDUST/ref/GRCh38_BSM.fa is the unmasked genome. This way
+GC values in repeats are considered properly.
+
+## Step 4 Build mrsfast index for mapping
+We have tested with mrsfast v. 3.3.9, but newer versions will work as well. 
+An index should be build from the masked genome.
+
+```
+cd GRCh38_BSM_WMDUST/ref-WMDUST-masked/
+mrsfast --index GRCh38_BSM_WMDUST_masked.fa
+```
+
+
+# Step 5 Download a small fastq set from 1000 Genomes for testing
+
+```
+cd ..
+mkdir fastq
+cd fastq
+wget ftp://ftp.sra.ebi.ac.uk/vol1/fastq/SRR062/SRR062559/SRR062559_1.fastq.gz
+wget ftp://ftp.sra.ebi.ac.uk/vol1/fastq/SRR062/SRR062559/SRR062559_2.fastq.gz
+```
+
+## Step 6 Mapping
+Now we are ready to do the mapping and postprocessing.  Here, we'll break it down
+into individual steps. Steps can be easily combined with a Python or other driver
+script to streamline the procedure for multiple samples.  If you have multiple libraries/runs/lanes
+for a sample, it is best to run them separately and then combine the GC normalized depth files. Other scripts
+in the repository can be used to combine the files.
+
+Here, we will split the reads into 36bp chunks and map them to the masked
+reference genome using mrsfast.  Other python scripts included can be used to process
+BAM files.  This example uses 8 threads and 16G of memory in the mrsfast step.
+
+```
+cd ..
+mkdir mapping
+
+python fastCN/extract-from-fastq36-pair.py --in1 fastq/SRR062559_1.fastq.gz --in2 fastq/SRR062559_2.fastq.gz  |  \
+mrsfast --search GRCh38_BSM_WMDUST/ref-WMDUST-masked/GRCh38_BSM_WMDUST_masked.fa \
+ --seq /dev/fd/0 --disable-nohits --mem 16 --threads 8 -e 2 --outcomp -o mapping/SRR062559
+```
+
+This will make the file `mapping/SRR062559.sam.gz`
+
+
+
 
