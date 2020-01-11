@@ -136,6 +136,39 @@ mrsfast --search GRCh38_BSM_WMDUST/ref-WMDUST-masked/GRCh38_BSM_WMDUST_masked.fa
 
 This will make the file `mapping/SRR062559.sam.gz`
 
+## Step 7 Perform GC correction and make per-bp depth file.
+
+The GC correction step uses a python utility `smooth_GC_mrsfast.py` for curve fitting. 
+Check that this program is found in your path:
+```
+which smooth_GC_mrsfast.py
+```
+
+Then make a directory for output and execute  `SAM_GC_correction`:
+
+```
+mkdir binary
+zcat mapping/SRR062559.sam.gz | \
+fastCN/SAM_GC_correction  \
+GRCh38_BSM_WMDUST/ref-WMDUST/GRCh38_BSM_WMDUST_unmasked.fa.fai \
+GRCh38_BSM_WMDUST/ref-WMDUST/GRCh38_BSM_WMDUST.GC_control.bin \
+/dev/fd/0 \
+binary/SRR062559
+```
+
+The resulting binary depth file should be gziped for future processing and to make files smaller and 
+
+`gzip binary/SRR062559.bin`
+
+This should also make a plot of the depth vs GC and a curve of correction factors used. In the example,
+there is a mean depth of ~1.25 and a smooth correction curve.
+
+Here is a sample image
+
+![SRR062559.png](sample-output/binary/SRR062559.png)
+
+
+
 
 
 
