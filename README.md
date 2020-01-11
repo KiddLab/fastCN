@@ -246,11 +246,13 @@ Here is the exclusion file we used contains DGV variants from these studies indi
 accessed from http://dgv.tcag.ca/dgv/docs/GRCh38_hg38_variants_2016-05-15.txt
 
 regions were taken from studies:
+```
  20492 1000_Genomes_Consortium_Phase_1
   42585 1000_Genomes_Consortium_Phase_3
    8418 Conrad_et_al_2009
    1307 McCarroll_et_al_2008
   11600 Sudmant_et_al_2013
+```
 
 Only the CNV regions were taken, not mobile element insertions, inversions, or other variants.
 
