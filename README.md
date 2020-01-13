@@ -274,5 +274,9 @@ Originally, the fastCN approach used help scripts and conversion utilities writt
 We have since converted the scripts to python3.  The older python2 scripts can be found in the
 other-scripts/old-python2-versions/ directory.
 
+### Do I need all the short unplaced contigs?
+No, not really for most things.  Along with decoy sequences, they are included to have a common reference across
+projects.  The many short contigs slow down the mrsFAST step.  You can remove them, but all of the index/control files
+should be regenerated with a consistent chromosome set.
 
 
