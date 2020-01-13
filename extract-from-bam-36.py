@@ -35,9 +35,9 @@ def determine_parts_all(seq):
     seqLen = len(seq)
     if seqLen < targetLen:
         return []        
-    numParts = seqLen/targetLen
+    numParts = int(seqLen/targetLen)
     delta = seqLen - (numParts * targetLen)
-    delta = delta/numParts
+    delta = int(delta/numParts)
     start = delta
     res = []
     for i in range(numParts):
