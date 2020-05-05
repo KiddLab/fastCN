@@ -52,8 +52,8 @@ def runCMD(cmd):
     if val == 0:
         pass
     else:
-        print 'command failed'
-        print cmd
+        print('command failed')
+        print(cmd)
         sys.exit(1)
 ###############################################################################
 def make_bed_color(trackName,CNfile,outFileName):
